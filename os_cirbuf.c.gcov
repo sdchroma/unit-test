@@ -1,0 +1,77 @@
+        -:    0:Colorization: line numbers: hotness: [41m[K> 50%[m[K [43m[K> 20%[m[K [42m[K> 10%[m[K
+        -:    0:Source:src/vf_lib/os/os_cirbuf.c
+        -:    0:Graph:src/vf_lib/os/os_cirbuf.gcno
+        -:    0:Data:src/vf_lib/os/os_cirbuf.gcda
+        -:    0:Runs:8
+        -:    1[m[K:#include "os_cirbuf.h"
+        -:    2[m[K:
+       40:[41m[K    3[m[K:int osCirBufCreate(osCirBuf *cb, uint8_t *bytes, uint32_t size)
+        -:    4[m[K:{
+       40:[41m[K    5[m[K:  if( ( size == 0 ) || ( cb == NULL ) || (bytes == NULL) )
+       24:[41m[K    6[m[K:    return -1;
+       16:[43m[K    7[m[K:  cb->ptr = bytes;
+       16:[43m[K    8[m[K:  cb->bufsize = size;
+       16:[43m[K    9[m[K:  cb->last = ((uint32_t)cb->ptr + cb->bufsize - 1u);
+       16:[43m[K   10[m[K:  if( osCirBufClear(cb) == -1 )
+    #####:   11[m[K:    return -1;
+       16:[43m[K   12[m[K:  return 1;
+        -:   13[m[K:}
+        -:   14[m[K:
+       40:[41m[K   15[m[K:int osCirBufClear(osCirBuf *cb)
+        -:   16[m[K:{
+       40:[41m[K   17[m[K:  if( cb == NULL )
+        8:[42m[K   18[m[K:	  return -1;
+       32:[41m[K   19[m[K:  if( cb->ptr == NULL )
+        8:[42m[K   20[m[K:	  return -1;
+       24:[41m[K   21[m[K:  if( cb->bufsize == 0 )
+        8:[42m[K   22[m[K:	 return -1;
+       16:[43m[K   23[m[K:  memset(cb->ptr, 0x00, cb->bufsize);
+       16:[43m[K   24[m[K:  cb->head = cb->ptr;
+       16:[43m[K   25[m[K:  cb->tail = cb->ptr;
+       16:[43m[K   26[m[K:  cb->used = 0;
+       16:[43m[K   27[m[K:  return 0;
+        -:   28[m[K:}
+        -:   29[m[K:
+    #####:   30[m[K:int osCirBufRead(osCirBuf *cb, uint8_t *bytes, uint32_t len)
+        -:   31[m[K:{
+        -:   32[m[K:  uint32_t counter;
+    #####:   33[m[K:  if( ( len == 0 ) || ( cb == NULL ) || ( cb->ptr == NULL ) ||
+    #####:   34[m[K:      ( cb->bufsize == 0 )  || (bytes == NULL) )
+    #####:   35[m[K:    return -1;
+        -:   36[m[K:  /* check if there is data */
+    #####:   37[m[K:  if (cb->used == 0)
+    #####:   38[m[K:    return 0;
+    #####:   39[m[K:  if (len > cb->used)
+    #####:   40[m[K:    len = cb->used;
+    #####:   41[m[K:  cb->used -= len;
+    #####:   42[m[K:  for (counter = 0; counter < len; counter++)
+        -:   43[m[K:  {
+    #####:   44[m[K:    bytes[counter] = *(cb->head++);
+        -:   45[m[K:    /* wrap if needed */
+    #####:   46[m[K:    if ( (uint32_t)cb->head > cb->last )
+    #####:   47[m[K:      cb->head = cb->ptr;
+        -:   48[m[K:  }
+    #####:   49[m[K:  return len;
+        -:   50[m[K:}
+        -:   51[m[K:
+    #####:   52[m[K:int osCirBufWrite(osCirBuf *cb, uint8_t *bytes, uint32_t len)
+        -:   53[m[K:{
+        -:   54[m[K:  int freesize;
+        -:   55[m[K:  uint32_t counter;
+    #####:   56[m[K:  if( ( len == 0 ) || ( cb == NULL ) || ( cb->ptr == NULL ) ||
+    #####:   57[m[K:      ( cb->bufsize == 0 )  || (bytes == NULL) )
+    #####:   58[m[K:    return -1;
+        -:   59[m[K:  /* check if there is space */
+    #####:   60[m[K:  freesize = cb->bufsize - cb->used;
+    #####:   61[m[K:  if ( len > freesize )
+    #####:   62[m[K:    return 0;
+    #####:   63[m[K:  cb->used += len;
+    #####:   64[m[K:  for (counter = 0; counter < len; counter++)
+        -:   65[m[K:  {
+    #####:   66[m[K:    *(cb->tail++) = bytes[counter];
+        -:   67[m[K:    /* wrap if needed */
+    #####:   68[m[K:    if ( (uint32_t)cb->tail > cb->last )
+    #####:   69[m[K:      cb->tail = cb->ptr;
+        -:   70[m[K:  }
+    #####:   71[m[K:  return len;
+        -:   72:}
