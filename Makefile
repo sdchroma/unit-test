@@ -4,7 +4,7 @@
 #
 
 # define the C compiler to use
-CC = gcc-11
+CC = gcc-10
 
 # define any compile-time flags
 CFLAGS	:= -Wall -Wextra -g
