@@ -9,6 +9,7 @@ pipeline{
     stage("Build"){
       steps{
         sh "make run"
+        sh "gcov src/vf_lib/os/os_cirbuf.c"
       }
     }
   }
